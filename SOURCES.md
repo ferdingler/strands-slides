@@ -18,6 +18,9 @@ Repository: https://github.com/strands-agents/box
 
 Local checkout used: `/local/home/fdingler/workplace/box`, commit `d5278f29`.
 
-The website loads Figtree, with weights 400–700. The deck bundles the regular,
-semibold, and bold faces from Google Fonts. The requested palette is applied in
-`style.css`. The cube drawing is an original decorative diagram, not a Strands logo.
+Browser-computed styles on the live website use JetBrains Mono for headings
+(weight 600) and Space Grotesk for body text (weight 400). The deck bundles the same
+Latin variable font files served to the website by Google Fonts, with weights
+400–700. A Figtree stylesheet link is present on the site but does not set the
+active heading or body font. The requested palette is applied in `style.css`.
+The cube drawing is an original decorative diagram, not a Strands logo.

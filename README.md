@@ -43,8 +43,9 @@ The output is `strands-box.pdf`.
 ## Style and sources
 
 `style.css` defines the black background, green (`#00cc60`) headings, white body
-copy, and purple (`#a78bfa`) accents. Figtree, the website's font, is bundled under
-`public/fonts/` with its license, so viewing the deck does not require Google Fonts.
+copy, and purple (`#a78bfa`) accents. The website's active fonts—JetBrains Mono for
+headings and code, and Space Grotesk for body text—are bundled under `public/fonts/`
+with their licenses, so viewing the deck does not require Google Fonts.
 `global-top.vue` defines the footer.
 
 See `SOURCES.md` and the presenter notes for source references and technical scope.

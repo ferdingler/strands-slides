@@ -10,7 +10,8 @@ colorSchema: dark
 canvasWidth: 1280
 aspectRatio: 16/9
 fonts:
-  sans: Figtree
+  sans: Space Grotesk
+  mono: JetBrains Mono
   provider: none
 drawings:
   enabled: false
