@@ -1,10 +1,10 @@
 ---
 theme: default
 layout: default
-title: Strands Box — the big picture
+title: Strands Box — introduction
 info: |
-  A five-slide introduction to Strands Box, adapted from Marc Brooker's
-  “Strands Box: The Big Picture.” Speaker notes include context and sources.
+  A short introduction to Strands Box, following the AWS Open Source Blog post
+  “Introducing Strands Box: AI agent sandboxes powered by Dogwood.”
 author: Fernando Dingler
 colorSchema: dark
 canvasWidth: 1280
@@ -35,108 +35,243 @@ Open with the product definition on screen, then explain the problem verbally.
 We use agents for ambiguous goals where the path is not known in advance. If a fixed process already solves the problem, a workflow can be simpler.
 The tension is preserving that freedom while setting precise boundaries: too little access prevents useful work; too much permits unintended actions.
 Box combines native operating-system containment with deterministic semantic policy in Dogwood. It works with different models and harnesses, locally or in the cloud; integration may still require configuration.
-This talk follows Marc Brooker's “Strands Box: The Big Picture,” rather than presenting an exhaustive feature list.
-https://strandsagents.com/blog/strands-box-the-big-picture/
+Developer preview, Apache 2.0. Builds on Dogwood (policy language) and the Dogwood Local Engine.
+https://aws.amazon.com/blogs/opensource/introducing-strands-box-ai-agent-sandboxes-powered-by-dogwood/
 -->
 
 ---
-class: history-slide
+class: yolo-slide
 ---
 
-# Policy can depend on history
+# Agents act without review
 
-<div class="policy-timeline" role="img" aria-label="Example rule: a passing npm test within 15 minutes, with no later git add, permits git push.">
-  <div class="timeline-node"><code>npm test</code><span>Passed</span></div>
-  <div class="connector" aria-hidden="true"></div>
-  <div class="timeline-node policy-node"><strong>Dogwood</strong><span>15-minute window</span></div>
-  <div class="connector" aria-hidden="true"></div>
-  <div class="timeline-node"><code>git push</code><span>Allowed</span></div>
+<div class="yolo" role="img" aria-label="One agent fans out to files, shell, APIs, and credentials, all auto-approved.">
+  <div class="yolo-agent">Agent</div>
+  <div class="yolo-fan" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <ul class="yolo-actions">
+    <li><code>read files</code><span>auto-approved</span></li>
+    <li><code>run shell</code><span>auto-approved</span></li>
+    <li><code>call APIs</code><span>auto-approved</span></li>
+    <li><code>use credentials</code><span>auto-approved</span></li>
+  </ul>
 </div>
 
-<div class="history-condition">No <code>git add</code> since the test.</div>
-<div class="example-label">Example rule</div>
+<!--
+Agents are useful because they act: they read files, run shell commands, execute generated code, and call APIs.
+That same autonomy is the risk. Coding assistants, home-grown harnesses, and off-the-shelf agents increasingly run in "YOLO mode", approving every action with no human in the loop.
+So agents wander out of their working directory, run a dangerous command, or reach a credential they were never meant to see.
+-->
+
+---
+class: reach-slide
+---
+
+# Isolation limits reach, not behavior
+
+<div class="reach" role="img" aria-label="Inside a sandbox, an incident agent should be allowed to read logs but not change infrastructure.">
+  <div class="reach-boundary">
+    <span class="boundary-label">Sandbox</span>
+    <div class="reach-agent">Incident agent</div>
+    <div class="reach-row allow"><code>read logs</code><span>should allow</span></div>
+    <div class="reach-row deny"><code>change infra</code><span>should deny</span></div>
+  </div>
+</div>
+
+<div class="reach-caption">Same tool. Different intent.</div>
 
 <!--
-This is semantic policy: the decision can use the action, its arguments, and prior outcomes. It is evaluated deterministically, outside the agent.
-Walk left to right: a successful npm test in the configured project, followed by a git push within 15 minutes, with no git add after the test.
-The diagram summarizes the blog's illustrative forbid rule. A complete policy also needs appropriate permits. The rule is not proof that every pushed change was tested: the article explicitly names git switch as one way the intended guarantee could fail.
-The blog's second example enforces an hourly budget of 60 AWS MCP tool-call attempts. MCP means Model Context Protocol. Its rule counts request events, including refused attempts, rather than only successful calls. Mention this as a second application of history if useful.
-The article also motivates a $100 daily payments limit. These examples show the value of business- and tool-level rules without claiming policy authoring is already effortless.
-Primary source: the blog's semantic-policy motivation and two policy.dw examples.
+The usual answer is a sandbox: put a boundary around what the agent can reach.
+But reach is only half the problem. An agent investigating a production incident needs to read logs and inspect infrastructure, without being allowed to change it.
+Containers and microVMs give strong isolation, but isolation doesn't enforce contextual rules. Once the agent can reach a tool, we still have to decide what it can do with it.
 -->
 
 ---
 class: layers-slide
 ---
 
-# Choose the right level of meaning
+# Contain, then govern
 
-<div class="semantic-layers" role="img" aria-label="Increasing semantic context: microVMs see packets and blocks; system calls expose files and processes; semantic policy sees tools, arguments, and history.">
-  <div class="semantic-layer device-layer"><h2>MicroVM</h2><span>Packets · Blocks</span></div>
-  <div class="semantic-layer syscall-layer"><h2>System calls</h2><span>Files · Processes</span></div>
-  <div class="semantic-layer operation-layer"><h2>Semantic policy</h2><span>Tools · Arguments · History</span></div>
+<div class="layers" role="img" aria-label="The agent runs inside OS containment. Its actions pass through four Box enforcement points that consult the Dogwood Local Engine.">
+  <div class="contain">
+    <span class="boundary-label">OS containment</span>
+    <strong>Agent</strong>
+  </div>
+  <div class="layers-arrow" aria-hidden="true"></div>
+  <div class="govern">
+    <span class="boundary-label">Box policy</span>
+    <div class="points"><span>Egress</span><span>Shell</span><span>Python</span><span>MCP</span></div>
+    <strong>Dogwood Local Engine</strong>
+  </div>
 </div>
 
-<div class="layer-caption">More context for each decision</div>
+<div class="layers-caption">One event history across every tool</div>
 
 <!--
-The visual shows increasing semantic context, not a ranking of security strength.
-A microVM deliberately exposes a small device interface. Network packets may contain encrypted payloads, and disk operations describe bytes and offsets. That is a strong boundary but an awkward location for per-tool policy.
-System calls expose more meaning: paths, processes, and connections. They are a useful layer for controls such as read-only access to a directory.
-The blog discusses syscall filtering's compatibility costs, and syscall emulation in gVisor. Neither directly exposes the full meaning of an MCP call in the way a protocol-aware broker does.
-Box places semantic checks in language- and protocol-aware components, where the operation and its arguments are available. Dogwood adds recorded history.
-The layers compose: an outer microVM can force network traffic through a gateway that applies richer policy.
-Primary source: “There are many ways to build a sandbox.”
+Two layers. Containment uses OS isolation (macOS Seatbelt today) to set the hard boundary: what the agent can reach on the host and the network.
+Inside that boundary, policy decides which actions are allowed. Four enforcement points: a network egress gateway every outbound request goes through, a Shell interpreter (Strands Shell), a Python interpreter (Monty), and an MCP broker. The interpreters and broker run in Box's process, outside the sandbox; the agent reaches them as ordinary bash, python3, and MCP over a local socket.
+All four use the embedded Dogwood Local Engine and share one history. Actions are normalized: a file read from shell or Python is fs:read; curl or Python HTTP is http:request. So you can write "after reading customer data, block outbound HTTP" without caring which tool did the read.
+Caveat: folders granted directly to the agent (like the project it edits) are bounded by containment only and don't appear in policy history.
+Why not microVMs? They isolate well, but add a separate guest environment to provision. Box runs in the developer's existing environment, and isolation alone still doesn't solve policy.
 -->
 
 ---
-class: architecture-slide
+class: effect-slide
 ---
 
-# Native isolation. External policy.
+# Judge the effect, not the call
 
-<div class="request-flow" role="img" aria-label="Mediated requests go from the agent's OS sandbox to trusted Box policy enforcement, then to tools and services.">
-  <div class="agent-boundary"><span class="boundary-label">OS sandbox</span><strong>Agent</strong></div>
-  <div class="request-connector"><span>Mediated requests</span><i aria-hidden="true"></i></div>
-  <div class="box-boundary"><span class="boundary-label">Trusted Box process</span><strong>Dogwood</strong><span class="entry-points">Shell · Python · MCP · HTTP</span></div>
-  <div class="connector" aria-hidden="true"></div>
-  <div class="destination">Tools<br>and services</div>
+<div class="effect" role="img" aria-label="A harness sees one shell command. Box sees one fs:delete decision per file, which a forbid rule blocks.">
+  <div class="effect-col">
+    <span class="boundary-label">Harness sees</span>
+    <code class="effect-cmd">rm -rf build/</code>
+  </div>
+  <div class="effect-arrow" aria-hidden="true"></div>
+  <div class="effect-col box-sees">
+    <span class="boundary-label">Box sees</span>
+    <code>fs:delete build/app.o</code>
+    <code>fs:delete build/lib.o</code>
+    <code>fs:delete build/main</code>
+    <span class="effect-verdict">forbid — nothing deleted</span>
+  </div>
 </div>
 
-<div class="architecture-caption">Linux + macOS. No microVM required.</div>
-
 <!--
-Explain the split: native OS mechanisms constrain the agent, and trusted components outside the agent process enforce Dogwood decisions for the requests they handle.
-The diagram shows a logical request flow. The interpreters, gateway, and MCP broker consult Dogwood; Dogwood itself is not a proxy that forwards requests or executes tools.
-Strands Shell and Monty provide policy checks for operations performed by generated shell and Python code. Network and MCP requests use the gateway and broker.
-Linux uses namespaces and seccomp, and macOS uses Seatbelt. A guest operating system is not required to run Box locally.
-The word “mediated” matters: direct filesystem grants remain OS-enforced and bypass per-operation Dogwood checks. External programs' own file operations are also outside those individual decisions. Keep policy-sensitive paths out of direct grants.
-The blog's “only way out” description refers to funneling controlled interactions through the policy layer; this diagram does not claim every syscall is checked by Dogwood.
-Primary source: blog architecture discussion and its two-pronged isolation/policy design.
-Scope reference: Box docs/user/security.md, “The two tiers.”
+Agents increasingly write code to do work, often Python and shell. That keeps intermediate data out of the model and saves tokens, but that code reads files and makes network calls, so interpreters are a great place to enforce policy.
+When the agent runs rm -rf build/, Strands Shell resolves the command and raises an fs:delete decision for each file. A forbid rule on fs:delete stops it before anything is deleted, while normal edits in the workspace still go through.
+This is also why harness permission prompts aren't enough: they run inside the agent's process and judge the tool call, not its effect. They also use different rule formats per harness. Box enforces from outside, and the same profile and policy.dw work across Claude Code, Codex, Kiro CLI, and pi.
+Trade-off: running interpreters outside the sandbox widens the trusted computing base.
 -->
 
 ---
-class: isolation-slide
+class: secret-slide
 ---
 
-# Pair policy with tenant isolation
+# Secrets never enter the box
 
-<div class="isolation-context">For multi-tenant cloud deployments</div>
-
-<div class="session-pair" role="img" aria-label="Two agent sessions, each inside its own microVM and each using Box for semantic policy.">
-  <div class="session-boundary"><span class="boundary-label">Session A · MicroVM</span><div class="session-box"><strong>Box</strong><span>Agent</span></div></div>
-  <div class="session-boundary"><span class="boundary-label">Session B · MicroVM</span><div class="session-box"><strong>Box</strong><span>Agent</span></div></div>
+<div class="secret-flow" role="img" aria-label="The agent sends a placeholder token. The egress gateway checks policy, swaps in the real secret, and forwards to the service.">
+  <div class="secret-node"><span class="boundary-label">Agent</span><code>PLACEHOLDER</code></div>
+  <div class="secret-arrow" aria-hidden="true"></div>
+  <div class="secret-node gateway"><span class="boundary-label">Egress gateway</span><strong>policy ✓</strong><code>real secret</code></div>
+  <div class="secret-arrow" aria-hidden="true"></div>
+  <div class="secret-node"><span class="boundary-label">Service</span><code>slack.com</code></div>
 </div>
 
-<div class="isolation-caption">Example: AgentCore Runtime</div>
+<div class="secret-caption">Bearer · Header · Basic · Query · SigV4</div>
 
 <!--
-The blog's recommendation for multi-tenant cloud deployments is a dedicated microVM per agent session, with Box inside it.
-Box provides local semantic control. The outer boundary isolates sessions. AgentCore Runtime is the article's example of combining them; AgentCore Policy can add tool-call governance in the cloud.
-This is a tradeoff, not a claim that Box's native containment is microVM-equivalent. Box trusts interpreters and protocol handlers in addition to OS mechanisms. More trusted code creates more opportunities for bugs and policy bypasses.
-The implementation uses Rust with testing, fuzzing, and validation. Those investments reduce risk; they do not remove the need to choose an isolation boundary appropriate to the deployment.
-The broader story is AWS investment in virtualization, automated reasoning, and open-source agent safety. Semantic policy complements those layers.
-Transition verbally to the live demo: run an agent, trigger a policy condition, and inspect the decision. The deck does not configure that workload.
-Primary source: “There is no free lunch” and “The bigger picture.”
+Every outbound request goes through the egress gateway. It sees host, port, method, and path, raises an http:request decision, and forwards only what policy permits.
+Because it sits in that path, it can do something the agent can't do safely: attach credentials. The agent gets a placeholder; the gateway swaps in the real secret on the way out. The real secret never enters the agent's environment.
+Supported today: bearer token, custom header (e.g. x-api-key), HTTP Basic, query parameter, and AWS SigV4, where the gateway signs with host-side credentials, for example from an "oncall" AWS profile backed by a read-only IAM role.
+Note: a credential binding grants no network reach by itself. Each destination still needs a permit.
+-->
+
+---
+class: memory-slide
+---
+
+# Temporal policies
+
+<div class="memory-rule">Allow my agent to post to Slack,<br>but no more than 3 messages every 10 min</div>
+
+<div class="memory-timeline" role="img" aria-label="Posts at 10:00, 10:03, and 10:05 are allowed; a fourth post at 10:06 is denied; reading logs at 10:07 is allowed; a post at 10:11 is allowed.">
+  <div class="tick"><time>10:00</time><span>post</span><b>allow</b></div>
+  <div class="tick"><time>10:03</time><span>post</span><b>allow</b></div>
+  <div class="tick"><time>10:05</time><span>post</span><b>allow</b></div>
+  <div class="tick deny"><time>10:06</time><span>post</span><b>deny</b></div>
+  <div class="tick"><time>10:07</time><span>logs</span><b>allow</b></div>
+  <div class="tick"><time>10:11</time><span>post</span><b>allow</b></div>
+</div>
+
+<!--
+This is where Dogwood shines: temporal operators let a decision depend on what the agent already did, its order, and limits accumulated over time.
+Scenario: an on-call agent posts progress to the incident channel. We want updates, but not a flood that buries the humans. So: at most three posts every 10 minutes.
+The rule counts recorded http:request responses to chat.postMessage with status 200, "formerly within 10m", and forbids once the count reaches 3. Binding on the response means refused attempts don't count.
+At 10:06 the agent doesn't get a silent failure: a 403 names the rule by @id and carries its @description ("Wait before you post again"), so the agent waits instead of retrying. Investigation continues under the AWS permits meanwhile.
+The same shape expresses any count, cooldown, or ordering constraint. Box enforces it; the agent doesn't have to remember.
+-->
+
+---
+class: otel-slide
+---
+
+# Every decision, in OpenTelemetry
+
+<div class="otel" role="img" aria-label="Box policy decisions and the agent's own OpenTelemetry spans flow into one OTLP record on a shared timeline.">
+  <div class="otel-sources">
+    <div class="otel-src box-src"><strong>Box</strong><span>every permit and deny</span></div>
+    <div class="otel-src"><strong>Agent</strong><span>its own OTEL spans</span></div>
+  </div>
+  <div class="otel-join" aria-hidden="true"><i></i></div>
+  <div class="otel-sink"><span class="boundary-label">OTLP</span><strong>One timeline</strong></div>
+</div>
+
+<div class="otel-record"><b>deny</b><code>http:request</code><code>slack.com</code><code>rate_limit_slack_posts</code></div>
+
+<!--
+Every policy decision Box makes is recorded, on by default, with no collector to install. Each record names the action, resource, verdict, and the rules that decided it, using standard OpenTelemetry keys like server address, method, file path, or resolved command.
+Each decision is both a span and a log record: the log is audit evidence, the span puts the decision on a timeline next to the agent's work.
+Box also accepts the agent's own OpenTelemetry. It points the standard OTEL_EXPORTER_OTLP_ENDPOINT at a loopback receiver, so an unmodified agent SDK exports with no code changes. Decisions carry the caller's trace context, so a denial lines up with the agent step that caused it.
+The agent is untrusted, so Box strips any attempt to forge Box's own attributes, and ignores "not sampled" for its decisions: an agent can't hide its own refusals.
+Output is OTLP JSON, one request per line, in a file the agent can't read or truncate. Records stay on your machine; point any OTEL viewer at it.
+Secrets stay out: no full URLs or command lines, and shell arguments are redacted unless they're plain flags.
+The record on the slide is an illustrative summary of a decision, not raw OTLP.
+Source: Box Core docs/design/telemetry.md.
+-->
+
+---
+class: deploy-slide
+---
+
+# Deploy anywhere
+
+<div class="deploy" role="img" aria-label="Custom agents built with Strands, LangGraph, or the Claude Agent SDK are packaged with Box and its policy, then deployed to AgentCore Runtime, EKS, EC2, or on-premises.">
+  <ul class="deploy-list">
+    <li>Strands</li>
+    <li>LangGraph</li>
+    <li>Claude Agent SDK</li>
+    <li>Your own</li>
+  </ul>
+  <div class="deploy-arrow" aria-hidden="true"></div>
+  <div class="deploy-core"><span class="boundary-label">Box + policy.dw</span><strong>Your agent</strong></div>
+  <div class="deploy-arrow" aria-hidden="true"></div>
+  <ul class="deploy-list targets">
+    <li>AgentCore Runtime</li>
+    <li>EKS</li>
+    <li>EC2</li>
+    <li>On-premises</li>
+  </ul>
+</div>
+
+<div class="deploy-caption">The policy travels with the agent.</div>
+
+<!--
+This one is for agent builders. If you're building your own agent with Strands, LangGraph, the Claude Agent SDK, or anything else, you can package it with Box.
+The box and its Dogwood policy ship as part of the deployment, so the rules governing the agent's actions stay with it wherever it runs: AgentCore Runtime, EKS, EC2, or your own data center.
+Same containment, same policy, same OpenTelemetry decision records, from a laptop to production.
+For multi-tenant cloud deployments, pair Box with a per-session isolation boundary such as an AgentCore Runtime microVM: Box gives semantic control inside, the microVM isolates sessions.
+-->
+
+---
+class: start-slide
+---
+
+# Your agent, in a box
+
+<div class="terminal">
+  <div><span class="prompt">$</span> box profile create claude</div>
+  <div><span class="prompt">$</span> box run claude</div>
+</div>
+
+<div class="agents"><span>Claude Code</span><span>Codex</span><span>Kiro CLI</span><span>pi</span></div>
+
+<div class="start-link">github.com/strands-agents/box</div>
+
+<!--
+The box CLI is the front door. box profile create picks an agent starter, the model provider, your MCP servers, and a starting policy: Open (any host but localhost), Scoped (only the model, package registries, and hosts you add), or Locked (also no shell commands of its own). Press Enter for each default.
+The profile lives in ~/.box/profiles/claude/: a short profile.toml listing packs (agent, provider, toolchains like git, cargo, node) and a policy.dw that's yours to edit. Box generates the Box Core configuration from it; box profile show claude --full prints it.
+Then cd into a project and box run claude. The agent can change that project; your other files, keys, and localhost services are out of reach. Model keys are added at the gateway, never seen by the agent.
+Starters today: Claude Code, Codex, Kiro CLI, pi. Apple Silicon Mac with macOS 15+; Linux ARM64 is experimental.
+Don't want to write Dogwood by hand? The Policy Authoring agent skill teaches your agent to write Box policies.
+What's next: more operating systems, packaging Box with deployed agents (AgentCore, ECS, Kubernetes), and Dogwood liveness rules.
+Issues on GitHub, questions on Discord.
 -->

@@ -5,7 +5,7 @@ shared dependencies and commands at the repository root.
 
 | Deck | Purpose |
 | --- | --- |
-| [intro-strands-box](decks/intro-strands-box/slides.md) | Five-slide demo introduction adapted from “Strands Box: The Big Picture”: agent autonomy, semantic policy, architecture, and isolation tradeoffs. |
+| [intro-strands-box](decks/intro-strands-box/slides.md) | Ten-slide introduction following the “Introducing Strands Box” launch post: the problem, containment plus policy, interpreters, credentials, temporal rules, and the `box` CLI. |
 
 ## Layout
 

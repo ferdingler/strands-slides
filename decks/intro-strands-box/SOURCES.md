@@ -1,39 +1,34 @@
 # Source notes
 
-This deck adapts the concepts and narrative of **“Strands Box: The Big Picture”**
-by Marc Brooker, published October 7, 2026, and read November 17, 2026:
-https://strandsagents.com/blog/strands-box-the-big-picture/
+Slides 8–9 present the `box` CLI (staging-boxy, local checkout `~/workplace/staging-boxy`, commit `9f4d705`) rather than the blog's Box Core `box.toml` workflow.
 
-| Slide | Blog material | Adaptation |
-| --- | --- | --- |
-| 1 — Strands Box | Product introduction and the tension between tight and loose boundaries. | Uses the requested product title and subheading; the autonomy discussion is in speaker notes. |
-| 2 — Policy can depend on history | Semantic-policy motivation and the code-push example. | Shows one policy timeline; the MCP quota and payments examples remain in speaker notes. |
-| 3 — Choose the right level of meaning | “There are many ways to build a sandbox.” | Uses a diagram to compare information visible at device, syscall, and semantic layers. This is not a security ranking. |
-| 4 — Native isolation. External policy. | Architecture discussion and the two-pronged isolation/policy design. | Shows the logical flow of mediated requests through trusted Box enforcement. |
-| 5 — Pair policy with tenant isolation | “There is no free lunch” and “The bigger picture.” | Shows a microVM for each agent session; trusted-code tradeoffs and the demo handoff are in speaker notes. |
+This deck follows the story of **“Introducing Strands Box: AI agent sandboxes
+powered by Dogwood”** by Fernando Dingler, AWS Open Source Blog, October 7, 2026:
+https://aws.amazon.com/blogs/opensource/introducing-strands-box-ai-agent-sandboxes-powered-by-dogwood/
 
-## Scope of the examples
+| Slide | Blog material |
+| --- | --- |
+| 1 — Strands Box | Launch: developer preview, Apache 2.0, built on Dogwood and the Dogwood Local Engine. |
+| 2 — Agents act without review | Opening: agents read files, run commands, call APIs, often in “YOLO mode.” |
+| 3 — Isolation limits reach, not behavior | Incident agent that may read logs but not change infrastructure. |
+| 4 — Contain, then govern | “Inside Strands Box”: OS containment plus four enforcement points sharing one history. |
+| 5 — Judge the effect, not the call | “Why interpreters?” (`rm -rf build/` → per-file `fs:delete`) and “Why not the harness's own permissions?” |
+| 6 — Secrets never enter the box | Egress gateway credential injection and the supported auth methods. |
+| 7 — Temporal policies | “Temporal policies”: the Slack cap of three posts per 10 minutes and its example timeline. |
+| 8 — Every decision, in OpenTelemetry | Box Core `docs/design/telemetry.md`: every effective decision recorded as an OTLP span and log, plus relayed agent OTEL data. The record line is an illustrative summary. |
+| 9 — Deploy anywhere | Blog “What's next”: package custom agents (Strands, LangChain, Claude Agent SDK) with Box and deploy them; targets per Fernando: AgentCore Runtime, EKS, EC2, on-premises. |
+| 10 — Your agent, in a box | `box profile create` / `box run` from the staging-boxy `README.md` and `docs/user/cli.md`; starters Claude Code, Codex, Kiro CLI, pi. Blog “What's next” is in the notes. |
 
-The push example is illustrative. The blog's rule requires a successful `npm test`
-in the project within 15 minutes, with no later `git add`; it does not prove that
-all code being pushed was tested. The blog names `git switch` as a counterexample.
-The MCP quota counts `tools/call` request events, including refused attempts, not
-only successful calls. Speaker notes preserve these qualifications.
+## Scope notes
 
-The architecture slide depicts mediated requests. Its speaker notes qualify the
-blog's “only way out” description: direct filesystem grants are OS-enforced and
-do not produce per-operation Dogwood checks.
-This follows the Box repo's `docs/user/security.md`, “The two tiers,” and `README.md`.
-Local checkout: `/local/home/fdingler/workplace/box`, commit `d5278f29`.
-
-The final slide's notes propose a demo sequence; they do not claim a live agent
-workload has already been configured. The blog's wider discussion of AWS investment,
-AgentCore Policy, gVisor, and policy-authoring work is retained in presenter notes.
+- Slide 4 omits a caveat kept in the notes: paths granted directly in `box.toml`
+  are bounded by containment only and do not appear in policy history.
+- Slide 5's file names under `build/` are illustrative.
+- Slide 7's timeline matches the blog's table. The rule counts 200 responses, so
+  refused attempts do not count toward the cap.
 
 ## Visual style
 
-The palette follows Fernando's requested black, `#00cc60`, white, and `#a78bfa`.
-The bundled fonts match browser-computed styles on the website: JetBrains Mono
-for headings and code, and Space Grotesk for body text. Font licenses are in
-`public/fonts/`. Diagrams are original simplifications for this talk.
-The repository's `AGENTS.md` defines the slide density and visual guidance.
+Black, `#00cc60`, white, and `#a78bfa`; JetBrains Mono for headings and code,
+Space Grotesk for body text. Font licenses are in `public/fonts/`. Diagrams are
+original simplifications. `AGENTS.md` at the repository root defines slide density.
