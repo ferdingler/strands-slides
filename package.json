@@ -1,12 +1,13 @@
 {
-  "name": "strands-box-slides",
+  "name": "strands-slides",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "slidev --bind 127.0.0.1",
-    "build": "slidev build --base ./",
-    "preview": "vite preview --host 127.0.0.1 --port 3032",
-    "export": "node scripts/export.mjs"
+    "decks": "node scripts/slidev.mjs list",
+    "dev": "node scripts/slidev.mjs dev",
+    "build": "node scripts/slidev.mjs build",
+    "preview": "node scripts/slidev.mjs preview",
+    "export": "node scripts/slidev.mjs export"
   },
   "overrides": {
     "dompurify": "^3.4.18",

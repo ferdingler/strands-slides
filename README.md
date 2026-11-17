@@ -1,51 +1,81 @@
-# Strands Box slides
+# Strands slides
 
-Five slides introducing native isolation and semantic policy in Strands Box.
-Edit `slides.md`; `---` separates slides. HTML inside the Markdown controls diagrams
-and layouts. Presenter notes are the HTML comments at the end of each slide.
+Markdown slide decks built with Slidev. Each deck lives in `decks/<name>/`, with
+shared dependencies and commands at the repository root.
 
-## Run
+| Deck | Purpose |
+| --- | --- |
+| [intro-strands-box](decks/intro-strands-box/slides.md) | Five-slide introduction for a Strands Box demo: native isolation, semantic policy, and getting started. |
 
-Requires Node.js 22.22 or newer.
+## Layout
+
+```text
+decks/
+  intro-strands-box/
+    slides.md         # Slide content and presenter notes
+    style.css         # Typography, colors, and layouts
+    global-top.vue    # Footer
+    SOURCES.md        # References and claim scope
+    public/fonts/     # Bundled fonts and licenses
+    vite.config.ts    # Local server configuration
+scripts/
+  slidev.mjs          # Deck selection and commands
+package.json
+package-lock.json
+```
+
+## Use a deck
+
+Requires Node.js 22.22 or newer. Run commands from the repository root:
 
 ```sh
 npm ci
-npm run dev
+npm run decks
+npm run dev -- intro-strands-box
 ```
 
-Open the local address printed by Slidev. Use the arrow keys to change slides,
-`f` for fullscreen, and `p` for presenter mode.
+Edit the deck's `slides.md` while the development server runs. `---` separates
+slides; HTML comments at the end of a slide hold presenter notes. Arrow keys change
+slides, `f` opens fullscreen, and `p` opens presenter mode.
 
-## Build
+The commands default to `intro-strands-box` when you omit the deck name.
+
+## Build and preview
 
 ```sh
-npm run build
+npm run build -- intro-strands-box
+npm run preview -- intro-strands-box
 ```
 
-The compiled HTML presentation is in `dist/`. Serve that folder through an HTTP
-server; opening `dist/index.html` directly as a file is not supported.
-
-```sh
-npm run preview
-```
+The build writes `dist/intro-strands-box/`. Preview serves that deck on
+`http://127.0.0.1:3032`, with support for slide URLs such as `/3`.
+Build each deck separately; its output directory is named after it.
 
 ## Export PDF
 
-Install Chromium once, then export:
+Install Chromium once, then export the selected deck:
 
 ```sh
 npx playwright install chromium
-npm run export
+npm run export -- intro-strands-box
 ```
 
-The output is `strands-box.pdf`.
+The output is `exports/intro-strands-box.pdf`. Generated builds and PDFs are ignored
+by Git.
 
-## Style and sources
+## Add a deck
 
-`style.css` defines the black background, green (`#00cc60`) headings, white body
-copy, and purple (`#a78bfa`) accents. The website's active fonts—JetBrains Mono for
-headings and code, and Space Grotesk for body text—are bundled under `public/fonts/`
-with their licenses, so viewing the deck does not require Google Fonts.
-`global-top.vue` defines the footer.
+Copy an existing deck, then edit its content, footer labels, and sources:
 
-See `SOURCES.md` and the presenter notes for source references and technical scope.
+```sh
+cp -R decks/intro-strands-box decks/my-next-deck
+npm run dev -- my-next-deck
+```
+
+The commands discover any directory under `decks/` that contains `slides.md`.
+No package changes are needed. The footer calculates its page count from the deck.
+Each deck owns its styling and assets, so edits to one deck leave the others intact.
+
+The introductory deck matches the website's fonts: JetBrains Mono for headings
+and code, and Space Grotesk for body text. Its fonts and licenses are bundled in
+the deck's `public/fonts/` directory.
