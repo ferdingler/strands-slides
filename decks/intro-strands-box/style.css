@@ -77,16 +77,6 @@ html, body, #app, .slidev-slide-container { background: #000; }
 .yolo-actions li { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding: 14px 4px; }
 .yolo-actions span { color: var(--purple); font-size: 22px; }
 
-/* 3 — isolation limits reach */
-.reach { margin: 70px auto 0; width: 820px; }
-.reach-boundary { border: 1px dashed var(--purple); padding: 26px 40px 34px; }
-.reach-agent { margin: 22px 0 26px; font: 500 32px 'JetBrains Mono', monospace; }
-.reach-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-top: 1px solid var(--line); }
-.reach-row span { font-size: 24px; }
-.reach-row.allow span { color: var(--green); }
-.reach-row.deny span { color: var(--purple); }
-.reach-caption { text-align: center; margin-top: 40px; font-size: 28px; }
-
 /* 4 — contain, then govern */
 .layers { display: grid; grid-template-columns: 300px 120px 1fr; align-items: center; margin-top: 90px; }
 .contain, .govern { height: 260px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }

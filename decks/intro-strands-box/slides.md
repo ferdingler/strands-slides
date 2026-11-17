@@ -63,29 +63,6 @@ So agents wander out of their working directory, run a dangerous command, or rea
 -->
 
 ---
-class: reach-slide
----
-
-# Isolation limits reach, not behavior
-
-<div class="reach" role="img" aria-label="Inside a sandbox, an incident agent should be allowed to read logs but not change infrastructure.">
-  <div class="reach-boundary">
-    <span class="boundary-label">Sandbox</span>
-    <div class="reach-agent">Incident agent</div>
-    <div class="reach-row allow"><code>read logs</code><span>should allow</span></div>
-    <div class="reach-row deny"><code>change infra</code><span>should deny</span></div>
-  </div>
-</div>
-
-<div class="reach-caption">Same tool. Different intent.</div>
-
-<!--
-The usual answer is a sandbox: put a boundary around what the agent can reach.
-But reach is only half the problem. An agent investigating a production incident needs to read logs and inspect infrastructure, without being allowed to change it.
-Containers and microVMs give strong isolation, but isolation doesn't enforce contextual rules. Once the agent can reach a tool, we still have to decide what it can do with it.
--->
-
----
 class: layers-slide
 ---
 
@@ -107,7 +84,7 @@ class: layers-slide
 <div class="layers-caption">One event history across every tool</div>
 
 <!--
-Two layers. Containment uses OS isolation (macOS Seatbelt today) to set the hard boundary: what the agent can reach on the host and the network.
+Sandboxes limit reach, but not behavior: an incident agent should read logs without changing infrastructure, and containers or microVMs can't express that. So, two layers. Containment uses OS isolation (macOS Seatbelt today) to set the hard boundary: what the agent can reach on the host and the network.
 Inside that boundary, policy decides which actions are allowed. Four enforcement points: a network egress gateway every outbound request goes through, a Shell interpreter (Strands Shell), a Python interpreter (Monty), and an MCP broker. The interpreters and broker run in Box's process, outside the sandbox; the agent reaches them as ordinary bash, python3, and MCP over a local socket.
 All four use the embedded Dogwood Local Engine and share one history. Actions are normalized: a file read from shell or Python is fs:read; curl or Python HTTP is http:request. So you can write "after reading customer data, block outbound HTTP" without caring which tool did the read.
 Caveat: folders granted directly to the agent (like the project it edits) are bounded by containment only and don't appear in policy history.
