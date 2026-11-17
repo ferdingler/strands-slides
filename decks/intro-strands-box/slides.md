@@ -16,160 +16,127 @@ fonts:
 drawings:
   enabled: false
 transition: fade
-class: motivation
+class: title-slide
 ---
 
-<div class="eyebrow">Strands Box / The big picture</div>
+# Strands Box
 
-# Agents need room<br>to solve problems
+<h2 class="title-subheading">An open source sandboxing engine for AI agents</h2>
 
-<div class="lead">We use agents when the path to the goal<br>isn’t known in advance.</div>
-
-<div class="tension">
-  <div><h2>Too constrained</h2><p>The agent loses the freedom<br>to explore and adapt.</p></div>
-  <div><h2>Too much access</h2><p>The agent can take actions<br>you never intended.</p></div>
-</div>
-
-<div class="thesis">Let the agent choose its approach.<br><strong>Enforce the boundaries deterministically.</strong></div>
-
-<div class="scope">Strands Box pairs a local agent sandbox with semantic policy.</div>
+<svg class="title-box" viewBox="0 0 280 290" fill="none" aria-hidden="true">
+  <path d="M140 20 250 84 250 210 140 274 30 210 30 84Z" stroke="#00cc60" stroke-width="2"/>
+  <path d="m30 84 110 64 110-64M140 148v126" stroke="#00cc60" stroke-width="2"/>
+  <path d="m85 116 55-32 55 32M85 179l55 32 55-32" stroke="#a78bfa" stroke-width="2"/>
+  <path d="M140 84v64" stroke="#a78bfa" stroke-width="2"/>
+</svg>
 
 <!--
-Introduce Box through the problem, rather than through a feature list.
-The blog starts from why we use agents: ambiguous goals and a path that cannot be fully prescribed.
-When the process is already clear, a workflow can be the simpler choice. The hard case is preserving useful autonomy while constraining effects.
-Box is a local sandbox with operating-system containment and Dogwood policy. It is not tied to the Strands Harness SDK, one model, or one cloud.
-“Any harness” describes the integration model, not a promise that every harness runs without configuration.
-Primary source: “Strands Box: The Big Picture,” opening discussion of agent autonomy and the tension of containment.
+Open with the product definition on screen, then explain the problem verbally.
+We use agents for ambiguous goals where the path is not known in advance. If a fixed process already solves the problem, a workflow can be simpler.
+The tension is preserving that freedom while setting precise boundaries: too little access prevents useful work; too much permits unintended actions.
+Box combines native operating-system containment with deterministic semantic policy in Dogwood. It works with different models and harnesses, locally or in the cloud; integration may still require configuration.
+This talk follows Marc Brooker's “Strands Box: The Big Picture,” rather than presenting an exhaustive feature list.
 https://strandsagents.com/blog/strands-box-the-big-picture/
 -->
 
 ---
-class: rules
+class: history-slide
 ---
 
-<div class="eyebrow">01 / Express the boundary</div>
+# Policy can depend on history
 
-# Policies should describe the work
-
-<div class="lead">Define the conditions for an action in terms<br>the developer cares about.</div>
-
-<div class="policy-examples">
-  <div class="policy-example">
-    <div class="rule-number">01</div>
-    <div><h2>Gate a code push</h2><p>Require a passing <code>npm test</code> in the project<br>within 15 minutes, with no later <code>git add</code>.</p></div>
-    <div class="rule-value"><strong>15</strong><span>minute window</span></div>
-  </div>
-  <div class="policy-example">
-    <div class="rule-number">02</div>
-    <div><h2>Bound tool usage</h2><p>Enforce a 60-attempt hourly budget<br>for AWS MCP tool calls.</p></div>
-    <div class="rule-value"><strong>60</strong><span>attempts / hour</span></div>
-  </div>
+<div class="policy-timeline" role="img" aria-label="Example rule: a passing npm test within 15 minutes, with no later git add, permits git push.">
+  <div class="timeline-node"><code>npm test</code><span>Passed</span></div>
+  <div class="connector" aria-hidden="true"></div>
+  <div class="timeline-node policy-node"><strong>Dogwood</strong><span>15-minute window</span></div>
+  <div class="connector" aria-hidden="true"></div>
+  <div class="timeline-node"><code>git push</code><span>Allowed</span></div>
 </div>
 
-<div class="takeaway"><strong>Dogwood</strong> evaluates the action, its arguments, and recorded history.</div>
+<div class="history-condition">No <code>git add</code> since the test.</div>
+<div class="example-label">Example rule</div>
 
 <!--
-These are conceptual summaries of the blog's two Dogwood policy examples, not complete policies to paste into production.
-The git rule requires a successful npm test in ~/my-project within the last 15 minutes, and no git add response since that test. Other actions, such as git switch, can still break the intended guarantee; the blog explicitly calls the example incomplete.
-The MCP (Model Context Protocol) rule counts tools/call request events for the configured aws server, so the quota counts attempts rather than only successful calls.
-The blog also uses a $100 daily payments budget to motivate semantic policy. Mention that verbally as another business-level condition, rather than adding a third on-screen example.
-The investment is in deterministic policy expressed at the tool/operation level. It is not an LLM judging whether an action “seems safe.”
-The blog notes that policy authoring needs further investment. Expressiveness does not make every policy easy to write or complete by default.
-Primary source: blog's semantic-policy introduction and the two policy.dw examples.
+This is semantic policy: the decision can use the action, its arguments, and prior outcomes. It is evaluated deterministically, outside the agent.
+Walk left to right: a successful npm test in the configured project, followed by a git push within 15 minutes, with no git add after the test.
+The diagram summarizes the blog's illustrative forbid rule. A complete policy also needs appropriate permits. The rule is not proof that every pushed change was tested: the article explicitly names git switch as one way the intended guarantee could fail.
+The blog's second example enforces an hourly budget of 60 AWS MCP tool-call attempts. MCP means Model Context Protocol. Its rule counts request events, including refused attempts, rather than only successful calls. Mention this as a second application of history if useful.
+The article also motivates a $100 daily payments limit. These examples show the value of business- and tool-level rules without claiming policy authoring is already effortless.
+Primary source: the blog's semantic-policy motivation and two policy.dw examples.
 -->
 
 ---
-class: abstraction
+class: layers-slide
 ---
 
-<div class="eyebrow">02 / Choose where to enforce</div>
+# Choose the right level of meaning
 
-# Rich policy needs the right view
-
-<div class="lead">Each layer exposes a different level of meaning.</div>
-
-<div class="layer-table" role="table" aria-label="Isolation and policy layers">
-  <div class="layer-header" role="row"><span role="columnheader">Layer</span><span role="columnheader">What it sees</span><span role="columnheader">A natural control</span></div>
-  <div class="layer-row" role="row"><h2 role="cell">MicroVM boundary</h2><p role="cell">Device I/O and packets;<br>network payloads may be encrypted.</p><p role="cell">Send traffic through<br>a designated gateway.</p></div>
-  <div class="layer-row" role="row"><h2 role="cell">System calls</h2><p role="cell">Files, processes,<br>and connections.</p><p role="cell">Read a project path;<br>deny writes.</p></div>
-  <div class="layer-row semantic-row" role="row"><h2 role="cell">Semantic policy</h2><p role="cell">Commands, tool arguments,<br>and earlier results.</p><p role="cell">Allow a push only when<br>the test condition holds.</p></div>
+<div class="semantic-layers" role="img" aria-label="Increasing semantic context: microVMs see packets and blocks; system calls expose files and processes; semantic policy sees tools, arguments, and history.">
+  <div class="semantic-layer device-layer"><h2>MicroVM</h2><span>Packets · Blocks</span></div>
+  <div class="semantic-layer syscall-layer"><h2>System calls</h2><span>Files · Processes</span></div>
+  <div class="semantic-layer operation-layer"><h2>Semantic policy</h2><span>Tools · Arguments · History</span></div>
 </div>
 
-<div class="takeaway">Box checks operations where it can understand their structure and history.</div>
+<div class="layer-caption">More context for each decision</div>
 
 <!--
-This is the blog's comparison of abstraction levels, not a ranking of overall security.
-A microVM's deliberately small device interface provides a strong isolation boundary. Block reads and encrypted network traffic are awkward inputs for rich per-tool policy.
-System-call filtering has more meaning: paths, programs, and connections. The blog discusses compatibility costs and why syscall emulation, as in gVisor, still does not directly expose MCP tool semantics.
-Rich policy belongs in components that understand the protocol or language. An outer microVM can require traffic to pass through such a gateway; the layers compose.
-Box does not decrypt arbitrary ciphertext at the hardware boundary. Its gateway and interpreters expose structured requests at the policy layer.
-Primary source: blog section “There are many ways to build a sandbox.”
+The visual shows increasing semantic context, not a ranking of security strength.
+A microVM deliberately exposes a small device interface. Network packets may contain encrypted payloads, and disk operations describe bytes and offsets. That is a strong boundary but an awkward location for per-tool policy.
+System calls expose more meaning: paths, processes, and connections. They are a useful layer for controls such as read-only access to a directory.
+The blog discusses syscall filtering's compatibility costs, and syscall emulation in gVisor. Neither directly exposes the full meaning of an MCP call in the way a protocol-aware broker does.
+Box places semantic checks in language- and protocol-aware components, where the operation and its arguments are available. Dogwood adds recorded history.
+The layers compose: an outer microVM can force network traffic through a gateway that applies richer policy.
+Primary source: “There are many ways to build a sandbox.”
 -->
 
 ---
-class: architecture
+class: architecture-slide
 ---
 
-<div class="eyebrow">03 / How Box follows from policy</div>
+# Native isolation. External policy.
 
-# Contain with the OS. Decide in Box.
-
-<div class="lead">The OS constrains access. Trusted components<br>apply policy to the operations they handle.</div>
-
-<div class="architecture-flow">
-  <div class="agent-zone"><span class="diagram-label">OS SANDBOX</span><strong>Agent</strong><p>Chooses tools.<br>Generates code.</p></div>
-  <div class="flow-arrow" aria-hidden="true">→</div>
-  <div class="trusted-zone">
-    <span class="diagram-label">BOX · OUTSIDE THE AGENT PROCESS</span>
-    <div class="entry-points"><span>Shell</span><span>Python</span><span>MCP</span><span>Network</span></div>
-    <div class="policy-engine"><strong>Dogwood</strong><span>Structured operations + shared history</span><span class="decision">permit / deny</span></div>
-  </div>
+<div class="request-flow" role="img" aria-label="Mediated requests go from the agent's OS sandbox to trusted Box policy enforcement, then to tools and services.">
+  <div class="agent-boundary"><span class="boundary-label">OS sandbox</span><strong>Agent</strong></div>
+  <div class="request-connector"><span>Mediated requests</span><i aria-hidden="true"></i></div>
+  <div class="box-boundary"><span class="boundary-label">Trusted Box process</span><strong>Dogwood</strong><span class="entry-points">Shell · Python · MCP · HTTP</span></div>
+  <div class="connector" aria-hidden="true"></div>
+  <div class="destination">Tools<br>and services</div>
 </div>
 
-<div class="design-points"><span><strong>No guest OS required.</strong> Native containment on Linux and macOS.</span><span><strong>Policy covers generated code.</strong> Box checks shell and Python operations.</span></div>
-
-<div class="scope-note">Direct filesystem grants remain OS-controlled and bypass individual Dogwood checks.</div>
+<div class="architecture-caption">Linux + macOS. No microVM required.</div>
 
 <!--
-The blog describes kernel isolation funneling interactions into a dedicated policy layer in user space. The agent does not control that layer.
-Strands Shell and Monty expose operations performed by generated shell and Python code, alongside the MCP broker and egress gateway. This is central to the article's concluding point: local semantic policy includes agents that generate code to call tools.
-The diagram groups components by responsibility; it is not a complete process or network diagram. The policy engine evaluates decisions, and the trusted components enforce them.
-In the actual configuration, direct filesystem grants are an explicit exception: the OS enforces them without a Dogwood decision for each file operation. Keep policy-sensitive paths out of those grants. This scope qualification comes from the Box security docs.
-Linux uses namespaces and seccomp; macOS uses Seatbelt. No microVM is required to use Box locally.
-Primary source: blog's architecture discussion before the policy examples and the conclusion of “There are many ways to build a sandbox.”
+Explain the split: native OS mechanisms constrain the agent, and trusted components outside the agent process enforce Dogwood decisions for the requests they handle.
+The diagram shows a logical request flow. The interpreters, gateway, and MCP broker consult Dogwood; Dogwood itself is not a proxy that forwards requests or executes tools.
+Strands Shell and Monty provide policy checks for operations performed by generated shell and Python code. Network and MCP requests use the gateway and broker.
+Linux uses namespaces and seccomp, and macOS uses Seatbelt. A guest operating system is not required to run Box locally.
+The word “mediated” matters: direct filesystem grants remain OS-enforced and bypass per-operation Dogwood checks. External programs' own file operations are also outside those individual decisions. Keep policy-sensitive paths out of direct grants.
+The blog's “only way out” description refers to funneling controlled interactions through the policy layer; this diagram does not claim every syscall is checked by Dogwood.
+Primary source: blog architecture discussion and its two-pronged isolation/policy design.
 Scope reference: Box docs/user/security.md, “The two tiers.”
 -->
 
 ---
-class: tradeoffs
+class: isolation-slide
 ---
 
-<div class="eyebrow">04 / Compose the protections</div>
+# Pair policy with tenant isolation
 
-# Semantic control + strong isolation
+<div class="isolation-context">For multi-tenant cloud deployments</div>
 
-<div class="tradeoff-grid">
-  <div class="tradeoff-copy">
-    <h2>Richer policy adds trusted code</h2>
-    <p>Interpreters and protocol handlers<br>create more places for bugs.</p>
-    <p class="investment">Built in Rust, with testing,<br>fuzzing, and validation.</p>
-    <h2 class="cloud-heading">For multi-tenant cloud deployments</h2>
-    <p>Pair Box with a dedicated microVM<br>for each agent session.</p>
-  </div>
-  <div class="microvm-zone">
-    <span class="diagram-label">MICROVM · ONE PER SESSION</span>
-    <div class="nested-box"><strong>Strands Box</strong><span>Local semantic policy</span><div class="nested-agent">Agent + tools</div></div>
-    <p>For example, run Box inside<br>AgentCore Runtime.</p>
-  </div>
+<div class="session-pair" role="img" aria-label="Two agent sessions, each inside its own microVM and each using Box for semantic policy.">
+  <div class="session-boundary"><span class="boundary-label">Session A · MicroVM</span><div class="session-box"><strong>Box</strong><span>Agent</span></div></div>
+  <div class="session-boundary"><span class="boundary-label">Session B · MicroVM</span><div class="session-box"><strong>Box</strong><span>Agent</span></div></div>
 </div>
 
-<div class="demo-handoff"><span class="demo-label">NEXT / LIVE DEMO</span><strong>Run an agent. See Box enforce a rule.</strong></div>
+<div class="isolation-caption">Example: AgentCore Runtime</div>
 
 <!--
-End with the blog's explicit tradeoff. The trusted computing base includes interpreters and protocol handlers; Rust and validation reduce risk but do not eliminate bugs or policy bypasses.
-The blog recommends adding a dedicated per-session microVM for multi-tenant cloud deployments, with AgentCore Runtime as the easiest example. Box supplies local semantic control, and the outer boundary isolates sessions.
-AgentCore Policy can add tool-call governance in the cloud. The larger story is AWS investment in virtualization, automated reasoning, and open-source agent safety, not Box replacing those layers.
-The demo handoff is a proposed sequence, not a claim that a particular live agent has already been configured. Choose the actual rule and workload before the talk.
-Primary source: blog sections “There is no free lunch” and “The bigger picture.”
+The blog's recommendation for multi-tenant cloud deployments is a dedicated microVM per agent session, with Box inside it.
+Box provides local semantic control. The outer boundary isolates sessions. AgentCore Runtime is the article's example of combining them; AgentCore Policy can add tool-call governance in the cloud.
+This is a tradeoff, not a claim that Box's native containment is microVM-equivalent. Box trusts interpreters and protocol handlers in addition to OS mechanisms. More trusted code creates more opportunities for bugs and policy bypasses.
+The implementation uses Rust with testing, fuzzing, and validation. Those investments reduce risk; they do not remove the need to choose an isolation boundary appropriate to the deployment.
+The broader story is AWS investment in virtualization, automated reasoning, and open-source agent safety. Semantic policy complements those layers.
+Transition verbally to the live demo: run an agent, trigger a policy condition, and inspect the decision. The deck does not configure that workload.
+Primary source: “There is no free lunch” and “The bigger picture.”
 -->
