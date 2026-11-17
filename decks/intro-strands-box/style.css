@@ -14,40 +14,52 @@
   --slidev-theme-primary: #00cc60;
   --green: #00cc60;
   --purple: #a78bfa;
-  --line: #303030;
+  --line: #343434;
 }
 html, body, #app, .slidev-slide-container { background: #000; }
 .slidev-layout {
   background: #000;
   color: #fff;
   font-family: 'Space Grotesk', system-ui, sans-serif;
-  padding: 62px 70px 84px;
+  padding: 55px 70px 82px;
   font-size: 24px;
 }
-.slidev-layout h1 {
+.slidev-layout h1, .slidev-layout h2 {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  color: var(--green);
-  font-size: 44px;
-  line-height: 1.08;
-  letter-spacing: -1.8px;
   font-weight: 600;
-  margin: 18px 0;
+}
+.slidev-layout h1 {
+  color: var(--green);
+  font-size: 43px;
+  line-height: 1.15;
+  letter-spacing: -1.7px;
+  margin: 21px 0 20px;
 }
 .slidev-layout h2 {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
   color: var(--purple);
-  font-size: 25px;
-  line-height: 1.22;
-  letter-spacing: -.3px;
-  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.3;
+  letter-spacing: -.7px;
   margin: 0 0 12px;
 }
-.slidev-layout p { margin: 0; line-height: 1.45; }
-.eyebrow { font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
-.subtitle { font-size: 25px; line-height: 1.4; max-width: 1100px; }
-.small-label, .diagram-label { font-size: 13px; letter-spacing: 1.2px; font-weight: 600; }
+.slidev-layout p { margin: 0; line-height: 1.4; }
+.slidev-layout code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: .88em;
+  color: #fff;
+}
+.eyebrow, .diagram-label, .demo-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+.eyebrow { font-size: 14px; }
+.lead { font-size: 28px; line-height: 1.35; }
+.takeaway { border-top: 1px solid var(--line); margin-top: 27px; padding-top: 20px; font-size: 23px; }
+.takeaway strong { color: var(--purple); font-weight: 500; }
 .deck-footer {
-  position: absolute; bottom: 25px; left: 70px; right: 70px;
+  position: absolute; bottom: 24px; left: 70px; right: 70px;
   display: flex; align-items: center; height: 30px;
   font: 15px 'Space Grotesk', system-ui, sans-serif; color: #fff;
 }
@@ -56,68 +68,66 @@ html, body, #app, .slidev-slide-container { background: #000; }
 .brand-product { color: var(--green); }
 .deck-description { margin-left: 30px; font-size: 13px; }
 .page-number { margin-left: auto; font-size: 15px; font-variant-numeric: tabular-nums; }
-.page-number span { color: #a9a9a9; margin-left: 5px; }
-.opening h1 { font-size: 108px; letter-spacing: -5px; margin-top: 48px; margin-bottom: 18px; }
-.hero-subtitle { font-size: 40px; line-height: 1.2; letter-spacing: -1px; }
-.box-mark { position: absolute; width: 215px; height: 245px; top: 172px; right: 111px; color: var(--green); }
-.hero-bottom { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 65px; border-top: 1px solid var(--line); padding-top: 25px; gap: 28px; }
-.hero-point > span { color: var(--purple); font-size: 14px; margin-right: 13px; }
-.hero-point strong { font-size: 23px; font-weight: 600; }
-.hero-point p { font-size: 19px; margin-top: 8px; }
-.native-layout { display: grid; grid-template-columns: 1.05fr 1fr; gap: 72px; margin-top: 34px; }
-.boundary-diagram { border: 1px solid var(--line); padding: 20px 26px; }
-.diagram-label { margin-bottom: 17px; }
-.agent-boundary { border: 1px solid var(--green); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 7px; }
-.agent-boundary .small-label { color: var(--green); font-size: 12px; }
-.agent-boundary strong { font-size: 27px; font-weight: 600; }
-.agent-boundary > span:last-child { font-size: 18px; }
-.boundary-line { text-align: center; position: relative; padding: 13px 0; font-size: 14px; color: var(--purple); }
-.host-resources { border-top: 1px solid var(--line); padding-top: 13px; text-align: center; font-size: 20px; }
-.native-copy { padding-top: 7px; }
-.native-copy p { font-size: 22px; margin-bottom: 30px; }
-.platform { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding: 15px 0; font-size: 21px; }
-.platform strong { font-weight: 600; }
-.platform span { font-size: 19px; }
-.takeaway { margin-top: 25px; padding: 15px 0 0; border-top: 1px solid var(--line); font-size: 18px; }
-.policy-dimensions { display: grid; grid-template-columns: repeat(3,1fr); gap: 30px; margin-top: 36px; }
-.policy-dimensions > div { position: relative; padding-left: 36px; }
-.dimension-number { position: absolute; left: 0; top: 5px; font-size: 14px; color: var(--purple); }
-.policy-dimensions h2 { color: #fff; font-size: 24px; }
-.policy-dimensions p { font-size: 20px; }
-.scenario { margin-top: 34px; border-top: 1px solid var(--purple); border-bottom: 1px solid var(--line); padding: 19px 0 23px; }
-.scenario .small-label { color: var(--purple); font-size: 12px; }
-.event-flow { display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-top: 18px; }
-.event-flow > div { display: flex; flex-direction: column; gap: 7px; }
-.event-time { font-size: 15px; color: var(--purple); }
-.event-flow strong { font-size: 24px; font-weight: 600; }
-.event-flow div > span:last-child { font-size: 18px; line-height: 1.35; }
-.flow-arrow { color: var(--purple); font-size: 32px; }
-.verdict { padding: 10px 0 10px 22px; border-left: 3px solid var(--purple); }
-.verdict strong { color: var(--purple); letter-spacing: 1px; }
-.policy-rule { margin-top: 23px; font-size: 19px; }
-.slidev-layout code { font-family: 'JetBrains Mono', ui-monospace, monospace; background: transparent; font-size: .9em; color: var(--green); padding: 0; }
-.enforcement-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 65px; margin-top: 37px; }
-.surface-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.surface-row span { padding: 17px 10px; border: 1px solid var(--line); text-align: center; font-size: 21px; }
-.merge-line { display: flex; align-items: center; gap: 12px; font-size: 14px; padding: 8px 0 20px; color: var(--purple); }
-.merge-line i { flex: 1; height: 1px; background: var(--purple); }
-.engine { border: 1px solid var(--green); padding: 21px; display: flex; flex-direction: column; text-align: center; gap: 9px; }
-.engine strong { color: var(--green); font-size: 26px; font-weight: 600; }
-.engine span { font-size: 18px; }
-.enforcement-copy h2 { font-size: 26px; }
-.enforcement-copy p { font-size: 22px; margin-bottom: 29px; }
-.setup-flow { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; margin-top: 40px; }
-.step-number { color: var(--purple); font-size: 17px; display: block; margin-bottom: 13px; }
-.setup-flow h2 { color: #fff; font-size: 25px; }
-.setup-flow code { font-size: 19px; }
-.setup-flow p { font-size: 21px; margin-top: 14px; }
-.launch-command { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 22px 0; margin-top: 31px; display: flex; gap: 18px; align-items: center; }
-.launch-command span { color: var(--purple); font-size: 24px; }
-.launch-command code { font-size: 24px; color: #fff; }
-.closing-bottom { display: flex; justify-content: space-between; gap: 25px; margin-top: 24px; align-items: center; }
-.closing-bottom strong { display: block; font-size: 21px; font-weight: 600; }
-.closing-bottom a { display: block; color: var(--green); font-size: 17px; text-decoration: none; border: 0; margin-top: 7px; }
-.preview-note { font-size: 15px; line-height: 1.5; text-align: right; max-width: 420px; }
+.page-number span { color: #aaa; margin-left: 5px; }
+.motivation h1 { font-size: 55px; line-height: 1.12; letter-spacing: -2.5px; margin-top: 25px; }
+.motivation .lead { font-size: 27px; }
+.tension { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; margin-top: 28px; }
+.tension > div { border-top: 1px solid var(--line); padding-top: 17px; }
+.tension h2 { font-size: 23px; margin-bottom: 8px; }
+.tension p { font-size: 23px; }
+.thesis { margin-top: 26px; padding-left: 20px; border-left: 3px solid var(--green); font-size: 27px; line-height: 1.35; }
+.thesis strong { font-weight: 500; }
+.scope { margin-top: 20px; font-size: 19px; }
+.policy-examples { margin-top: 33px; }
+.policy-example { display: grid; grid-template-columns: 40px 1fr 200px; gap: 18px; align-items: center; border-top: 1px solid var(--line); padding: 21px 0; }
+.policy-example:last-child { border-bottom: 1px solid var(--line); }
+.rule-number { color: var(--purple); align-self: start; padding-top: 3px; font: 16px 'JetBrains Mono', monospace; }
+.policy-example p { font-size: 25px; line-height: 1.4; }
+.policy-example h2 { font-size: 25px; }
+.rule-value { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.rule-value strong { color: var(--green); font: 64px/1 'JetBrains Mono', monospace; letter-spacing: -4px; }
+.rule-value span { font-size: 17px; }
+.rules .takeaway { border: 0; padding-top: 0; margin-top: 22px; }
+.layer-table { margin-top: 35px; }
+.layer-header, .layer-row { display: grid; grid-template-columns: 290px 1.15fr 1fr; gap: 26px; align-items: center; }
+.layer-header { padding-bottom: 13px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
+.layer-row { border-top: 1px solid var(--line); min-height: 106px; padding: 18px 0; }
+.layer-row h2 { font-size: 22px; margin: 0; color: #fff; }
+.layer-row p { font-size: 22px; }
+.semantic-row { border-top-color: var(--green); border-bottom: 1px solid var(--green); }
+.semantic-row h2 { color: var(--green); }
+.abstraction .takeaway { border: 0; margin-top: 19px; padding-top: 0; }
+.architecture-flow { display: grid; grid-template-columns: 280px 60px 1fr; gap: 24px; align-items: center; margin-top: 26px; }
+.agent-zone { border: 1px solid var(--purple); padding: 22px; min-height: 210px; display: flex; flex-direction: column; justify-content: center; gap: 17px; }
+.diagram-label { font-size: 13px; color: var(--purple); }
+.agent-zone > strong { font: 36px 'JetBrains Mono', monospace; font-weight: 500; }
+.agent-zone p { font-size: 22px; }
+.flow-arrow { color: var(--purple); text-align: center; font-size: 42px; }
+.trusted-zone { border: 1px solid var(--green); padding: 18px 25px; }
+.trusted-zone > .diagram-label { color: var(--green); }
+.entry-points { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin: 18px 0; }
+.entry-points span { font-size: 20px; border-bottom: 1px solid var(--line); padding-bottom: 12px; text-align: center; }
+.policy-engine { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
+.policy-engine strong { color: var(--green); font: 28px 'JetBrains Mono', monospace; }
+.policy-engine > span { font-size: 19px; }
+.policy-engine .decision { color: var(--purple); flex-basis: 100%; margin-top: 4px; font: 19px 'JetBrains Mono', monospace; }
+.design-points { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; font-size: 22px; }
+.design-points strong { font-weight: 600; }
+.scope-note { font-size: 16px; margin-top: 15px; }
+.tradeoff-grid { display: grid; grid-template-columns: 1.13fr 1fr; gap: 70px; margin-top: 36px; align-items: start; }
+.tradeoff-copy h2 { font-size: 23px; }
+.tradeoff-copy p { font-size: 23px; }
+.tradeoff-copy .investment { margin-top: 15px; }
+.tradeoff-copy .cloud-heading { margin-top: 28px; }
+.microvm-zone { border: 1px solid var(--purple); padding: 24px; }
+.nested-box { border: 1px solid var(--green); padding: 22px; margin-top: 23px; display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.nested-box > strong { color: var(--green); font: 29px 'JetBrains Mono', monospace; font-weight: 500; }
+.nested-box > span { font-size: 21px; }
+.nested-agent { margin-top: 14px; border-top: 1px solid var(--line); width: 100%; text-align: center; padding-top: 14px; font-size: 22px; }
+.microvm-zone > p { margin-top: 20px; text-align: center; font-size: 21px; }
+.demo-handoff { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 26px; display: flex; gap: 50px; align-items: center; }
+.demo-label { color: var(--purple); font-size: 14px; }
+.demo-handoff > strong { font-size: 28px; line-height: 1.3; font-weight: 500; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
