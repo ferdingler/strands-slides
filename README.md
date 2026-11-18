@@ -51,6 +51,13 @@ The build writes `dist/intro-strands-box/`. Preview serves that deck on
 `http://127.0.0.1:3032`, with support for slide URLs such as `/3`.
 Build each deck separately; its output directory is named after it.
 
+## Published decks
+
+Every push to `main` builds each deck and publishes it to GitHub Pages through
+`.github/workflows/pages.yml`: https://ferdingler.github.io/strands-slides/.
+Published decks use hash routing, so slide links look like
+`https://ferdingler.github.io/strands-slides/intro-strands-box/#/5`.
+
 ## Export PDF
 
 Install Chromium once, then export the selected deck:

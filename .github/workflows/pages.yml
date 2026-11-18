@@ -1,0 +1,59 @@
+name: Deploy decks to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build every deck
+        env:
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          set -euo pipefail
+          site="$GITHUB_WORKSPACE/_site"
+          links=""
+          for deck in $(node scripts/slidev.mjs list); do
+            # Hash routing keeps slide links like /<deck>/#/5 working on static hosting.
+            npx slidev build "decks/$deck/slides.md" \
+              --base "/$REPO/$deck/" --router-mode hash --out "$site/$deck"
+            links="$links<li><a href=\"$deck/\">$deck</a></li>"
+          done
+          cat > "$site/index.html" <<HTML
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Strands slides</title>
+          <style>body{background:#000;color:#fff;font:20px system-ui,sans-serif;padding:48px 16px;max-width:720px;margin:auto}h1{color:#00cc60;font-family:ui-monospace,monospace}a{color:#a78bfa}</style>
+          </head><body><h1>Strands slides</h1><ul>$links</ul></body></html>
+          HTML
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
